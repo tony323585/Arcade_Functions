@@ -1,0 +1,35 @@
+// This rule will update an attribute in the parent feature
+
+var parent_id = $feature.GUID;
+// Note: The parent class name needs to be a string literal in both of the following lines, do not replace the literal
+// in the FeatureSetByName with the variable
+// If this is enterprise, use the fully qualified name, i.e: database.owner.class
+var parent_class_name = "Utility_Services.DBO.Valve";
+var parent_class = FeatureSetByName($datastore, "Utility_Services.DBO.Valve", ["GlobalID"], false);
+
+
+if (IsEmpty(parent_id)) {
+    return parent_id;
+}
+
+// Filter the parent class for only related features
+var parent_record = First(Filter(parent_class, "globalid = @parent_id"));
+if (IsEmpty(parent_record)) {
+    return parent_id;
+}
+
+// Return the original value in the result parameter, as to not lost the entered value
+// Using the edit parameter, return the class and list of updates
+
+return {
+    'edit': [
+        {
+            'className': parent_class_name,
+            'updates': [{
+                'globalID': parent_record.GlobalID,
+                'attributes': {
+                           'Operation_Date': Now()
+}
+            }]
+        }]
+};
